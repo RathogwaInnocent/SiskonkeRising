@@ -7,23 +7,23 @@ import pygame, sys, random
 from pygame.locals import *
 
 # Create the constants (go ahead and experiment with different values)
-BOARDWIDTH = 4  # number of columns in the board
-BOARDHEIGHT = 4 # number of rows in the board
-TILESIZE = 80
-WINDOWWIDTH = 640
-WINDOWHEIGHT = 480
-FPS = 30
-BLANK = None
+Board_Width = 4  # number of columns in the board
+Board_Height = 4 # number of rows in the board
+Tile_Size = 80
+Window_Width = 640
+Window_Height = 480
+Frames_Per_Second = 30
+Blank = None
 
 #                 R    G    B
 BLACK =         (  0,   0,   0)
 WHITE =         (255, 255, 255)
 BRIGHTBLUE =    (  0,  50, 255)
 DARKTURQUOISE = (  3,  54,  73)
-GREEN =         (  0, 204,   0)
+Blue =         ( 0, 0,   255)
 
 BGCOLOR = DARKTURQUOISE
-TILECOLOR = GREEN
+TILECOLOR = Blue
 TEXTCOLOR = WHITE
 BORDERCOLOR = BRIGHTBLUE
 BASICFONTSIZE = 20
@@ -32,8 +32,8 @@ BUTTONCOLOR = WHITE
 BUTTONTEXTCOLOR = BLACK
 MESSAGECOLOR = WHITE
 
-XMARGIN = int((WINDOWWIDTH - (TILESIZE * BOARDWIDTH + (BOARDWIDTH - 1))) / 2)
-YMARGIN = int((WINDOWHEIGHT - (TILESIZE * BOARDHEIGHT + (BOARDHEIGHT - 1))) / 2)
+XMARGIN = int((Window_Width - (Tile_Size * Board_Width + (Board_Width - 1))) / 2)
+YMARGIN = int((Window_Height - (Tile_Size * Board_Height + (Board_Height - 1))) / 2)
 
 UP = 'up'
 DOWN = 'down'
@@ -41,18 +41,18 @@ LEFT = 'left'
 RIGHT = 'right'
 
 def main():
-    global FPSCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT
+    global Frames_Per_SecondCLOCK, DISPLAYSURF, BASICFONT, RESET_SURF, RESET_RECT, NEW_SURF, NEW_RECT, SOLVE_SURF, SOLVE_RECT
 
     pygame.init()
-    FPSCLOCK = pygame.time.Clock()
-    DISPLAYSURF = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
+    Frames_Per_SecondCLOCK = pygame.time.Clock()
+    DISPLAYSURF = pygame.display.set_mode((Window_Width, Window_Height))
     pygame.display.set_caption('Slide Puzzle')
     BASICFONT = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
 
     # Store the option buttons and their rectangles in OPTIONS.
-    RESET_SURF, RESET_RECT = makeText('Reset',    TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 90)
-    NEW_SURF,   NEW_RECT   = makeText('New Game', TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 60)
-    SOLVE_SURF, SOLVE_RECT = makeText('Solve',    TEXTCOLOR, TILECOLOR, WINDOWWIDTH - 120, WINDOWHEIGHT - 30)
+    RESET_SURF, RESET_RECT = makeText('Reset',    TEXTCOLOR, TILECOLOR, Window_Width - 120, Window_Height - 90)
+    NEW_SURF,   NEW_RECT   = makeText('New Game', TEXTCOLOR, TILECOLOR, Window_Width - 120, Window_Height - 60)
+    SOLVE_SURF, SOLVE_RECT = makeText('Solve',    TEXTCOLOR, TILECOLOR, Window_Width - 120, Window_Height - 30)
 
     mainBoard, solutionSeq = generateNewPuzzle(80)
     SOLVEDBOARD = getStartingBoard() # a solved board is the same as the board in a start state.
@@ -111,7 +111,7 @@ def main():
             makeMove(mainBoard, slideTo)
             allMoves.append(slideTo) # record the slide
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        Frames_Per_SecondCLOCK.tick(Frames_Per_Second)
 
 
 def terminate():
@@ -130,27 +130,27 @@ def checkForQuit():
 
 def getStartingBoard():
     # Return a board data structure with tiles in the solved state.
-    # For example, if BOARDWIDTH and BOARDHEIGHT are both 3, this function
-    # returns [[1, 4, 7], [2, 5, 8], [3, 6, BLANK]]
+    # For example, if Board_Width and Board_Height are both 3, this function
+    # returns [[1, 4, 7], [2, 5, 8], [3, 6, Blank]]
     counter = 1
     board = []
-    for x in range(BOARDWIDTH):
+    for x in range(Board_Width):
         column = []
-        for y in range(BOARDHEIGHT):
+        for y in range(Board_Height):
             column.append(counter)
-            counter += BOARDWIDTH
+            counter += Board_Width
         board.append(column)
-        counter -= BOARDWIDTH * (BOARDHEIGHT - 1) + BOARDWIDTH - 1
+        counter -= Board_Width * (Board_Height - 1) + Board_Width - 1
 
-    board[BOARDWIDTH-1][BOARDHEIGHT-1] = BLANK
+    board[Board_Width-1][Board_Height-1] = Blank
     return board
 
 
 def getBlankPosition(board):
     # Return the x and y of board coordinates of the blank space.
-    for x in range(BOARDWIDTH):
-        for y in range(BOARDHEIGHT):
-            if board[x][y] == BLANK:
+    for x in range(Board_Width):
+        for y in range(Board_Height):
+            if board[x][y] == Blank:
                 return (x, y)
 
 
@@ -195,8 +195,8 @@ def getRandomMove(board, lastMove=None):
 
 
 def getLeftTopOfTile(tileX, tileY):
-    left = XMARGIN + (tileX * TILESIZE) + (tileX - 1)
-    top = YMARGIN + (tileY * TILESIZE) + (tileY - 1)
+    left = XMARGIN + (tileX * Tile_Size) + (tileX - 1)
+    top = YMARGIN + (tileY * Tile_Size) + (tileY - 1)
     return (left, top)
 
 
@@ -205,7 +205,7 @@ def getSpotClicked(board, x, y):
     for tileX in range(len(board)):
         for tileY in range(len(board[0])):
             left, top = getLeftTopOfTile(tileX, tileY)
-            tileRect = pygame.Rect(left, top, TILESIZE, TILESIZE)
+            tileRect = pygame.Rect(left, top, Tile_Size, Tile_Size)
             if tileRect.collidepoint(x, y):
                 return (tileX, tileY)
     return (None, None)
@@ -215,10 +215,10 @@ def drawTile(tilex, tiley, number, adjx=0, adjy=0):
     # draw a tile at board coordinates tilex and tiley, optionally a few
     # pixels over (determined by adjx and adjy)
     left, top = getLeftTopOfTile(tilex, tiley)
-    pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left + adjx, top + adjy, TILESIZE, TILESIZE))
+    pygame.draw.rect(DISPLAYSURF, TILECOLOR, (left + adjx, top + adjy, Tile_Size, Tile_Size))
     textSurf = BASICFONT.render(str(number), True, TEXTCOLOR)
     textRect = textSurf.get_rect()
-    textRect.center = left + int(TILESIZE / 2) + adjx, top + int(TILESIZE / 2) + adjy
+    textRect.center = left + int(Tile_Size / 2) + adjx, top + int(Tile_Size / 2) + adjy
     DISPLAYSURF.blit(textSurf, textRect)
 
 
@@ -242,8 +242,8 @@ def drawBoard(board, message):
                 drawTile(tilex, tiley, board[tilex][tiley])
 
     left, top = getLeftTopOfTile(0, 0)
-    width = BOARDWIDTH * TILESIZE
-    height = BOARDHEIGHT * TILESIZE
+    width = Board_Width * Tile_Size
+    height = Board_Height * Tile_Size
     pygame.draw.rect(DISPLAYSURF, BORDERCOLOR, (left - 5, top - 5, width + 11, height + 11), 4)
 
     DISPLAYSURF.blit(RESET_SURF, RESET_RECT)
@@ -273,9 +273,9 @@ def slideAnimation(board, direction, message, animationSpeed):
     baseSurf = DISPLAYSURF.copy()
     # draw a blank space over the moving tile on the baseSurf Surface.
     moveLeft, moveTop = getLeftTopOfTile(movex, movey)
-    pygame.draw.rect(baseSurf, BGCOLOR, (moveLeft, moveTop, TILESIZE, TILESIZE))
+    pygame.draw.rect(baseSurf, BGCOLOR, (moveLeft, moveTop, Tile_Size, Tile_Size))
 
-    for i in range(0, TILESIZE, animationSpeed):
+    for i in range(0, Tile_Size, animationSpeed):
         # animate the tile sliding over
         checkForQuit()
         DISPLAYSURF.blit(baseSurf, (0, 0))
@@ -289,7 +289,7 @@ def slideAnimation(board, direction, message, animationSpeed):
             drawTile(movex, movey, board[movex][movey], i, 0)
 
         pygame.display.update()
-        FPSCLOCK.tick(FPS)
+        Frames_Per_SecondCLOCK.tick(Frames_Per_Second)
 
 
 def generateNewPuzzle(numSlides):
@@ -303,7 +303,7 @@ def generateNewPuzzle(numSlides):
     lastMove = None
     for i in range(numSlides):
         move = getRandomMove(board, lastMove)
-        slideAnimation(board, move, 'Generating new puzzle...', animationSpeed=int(TILESIZE / 3))
+        slideAnimation(board, move, 'Generating new puzzle...', animationSpeed=int(Tile_Size / 3))
         makeMove(board, move)
         sequence.append(move)
         lastMove = move
@@ -324,7 +324,7 @@ def resetAnimation(board, allMoves):
             oppositeMove = LEFT
         elif move == LEFT:
             oppositeMove = RIGHT
-        slideAnimation(board, oppositeMove, '', animationSpeed=int(TILESIZE / 2))
+        slideAnimation(board, oppositeMove, '', animationSpeed=int(Tile_Size / 2))
         makeMove(board, oppositeMove)
 
 
